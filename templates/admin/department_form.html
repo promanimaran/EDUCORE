@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Department — EduCore{% endblock %}
+{% block page_title %}{{ action }} Department{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <h5><i class="fas fa-building me-2"></i>{{ action }} Department</h5>
+        <a href="{{ url_for('admin_departments') }}" class="btn btn-sm btn-outline-secondary">
+          <i class="fas fa-arrow-left me-1"></i>Back
+        </a>
+      </div>
+      <form method="POST">
+        <div class="row g-3 p-3">
+          <div class="col-12">
+            <label class="form-label">Department Name <span class="text-danger">*</span></label>
+            <input type="text" name="dept_name" class="form-control cms-input"
+                   value="{{ dept['dept_name'] if dept else '' }}" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Code <span class="text-danger">*</span></label>
+            <input type="text" name="code" class="form-control cms-input"
+                   value="{{ dept['code'] if dept else '' }}" required placeholder="e.g. CS, ECE"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Head of Department (HOD)</label>
+            <input type="text" name="hod" class="form-control cms-input"
+                   value="{{ dept['hod'] if dept else '' }}" placeholder="Dr. Name"/>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control cms-input" rows="3">{{ dept['description'] if dept else '' }}</textarea>
+          </div>
+          <div class="col-12 text-end">
+            <a href="{{ url_for('admin_departments') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>{{ action }} Department
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

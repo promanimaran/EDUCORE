@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Course — EduCore{% endblock %}
+{% block page_title %}{{ action }} Course{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <h5><i class="fas fa-book-open me-2"></i>{{ action }} Course</h5>
+        <a href="{{ url_for('admin_courses') }}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+      </div>
+      <form method="POST">
+        <div class="row g-3 p-3">
+          <div class="col-md-8">
+            <label class="form-label">Course Name <span class="text-danger">*</span></label>
+            <input type="text" name="course_name" class="form-control cms-input" value="{{ course['course_name'] if course else '' }}" required/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Code <span class="text-danger">*</span></label>
+            <input type="text" name="code" class="form-control cms-input" value="{{ course['code'] if course else '' }}" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Department</label>
+            <select name="dept_id" class="form-select cms-input">
+              <option value="">— Select —</option>
+              {% for d in departments %}
+              <option value="{{ d['dept_id'] }}" {{ 'selected' if course and course['dept_id']==d['dept_id'] else '' }}>{{ d['dept_name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Assigned Faculty</label>
+            <select name="staff_id" class="form-select cms-input">
+              <option value="">— Select —</option>
+              {% for s in staff_list %}
+              <option value="{{ s['staff_id'] }}" {{ 'selected' if course and course['staff_id']==s['staff_id'] else '' }}>{{ s['name'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Credits</label>
+            <input type="number" name="credits" class="form-control cms-input" value="{{ course['credits'] if course else 3 }}" min="1" max="6"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Semester</label>
+            <select name="semester" class="form-select cms-input">
+              {% for i in range(1,9) %}
+              <option value="{{ i }}" {{ 'selected' if course and course['semester']==i else ('selected' if i==1 and not course else '') }}>Semester {{ i }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select cms-input">
+              {% for st in ['Active','Inactive'] %}
+              <option value="{{ st }}" {{ 'selected' if course and course['status']==st else ('selected' if st=='Active' and not course else '') }}>{{ st }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control cms-input" rows="2">{{ course['description'] if course else '' }}</textarea>
+          </div>
+          <div class="col-12 text-end">
+            <a href="{{ url_for('admin_courses') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>{{ action }} Course</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

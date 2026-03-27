@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}{{ student['name'] }} — EduCore{% endblock %}
+{% block page_title %}Student Profile{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="cms-card profile-card text-center p-4">
+      <div class="profile-avatar-lg mx-auto">{{ student['name'][0] | upper }}</div>
+      <h4 class="mt-3 mb-1">{{ student['name'] }}</h4>
+      <p class="text-muted mb-2"><span class="badge-id">{{ student['roll_no'] }}</span></p>
+      <span class="status-badge {{ student['status'] | lower }}">{{ student['status'] }}</span>
+      <hr/>
+      <div class="profile-details text-start">
+        <div class="profile-row"><i class="fas fa-envelope"></i>{{ student['email'] }}</div>
+        <div class="profile-row"><i class="fas fa-phone"></i>{{ student['phone'] or '—' }}</div>
+        <div class="profile-row"><i class="fas fa-building"></i>{{ student['dept_name'] or '—' }}</div>
+        <div class="profile-row"><i class="fas fa-layer-group"></i>Year {{ student['year'] }}</div>
+        <div class="profile-row"><i class="fas fa-calendar-alt"></i>Admitted {{ student['admission_year'] or '—' }}</div>
+      </div>
+      <div class="mt-3 d-flex gap-2 justify-content-center">
+        <a href="{{ url_for('admin_edit_student', sid=student['student_id']) }}" class="btn btn-sm btn-primary"><i class="fas fa-pen me-1"></i>Edit</a>
+        <a href="{{ url_for('admin_student_report', sid=student['student_id']) }}" class="btn btn-sm btn-outline-primary"><i class="fas fa-file-alt me-1"></i>Report</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="cms-card mb-4">
+      <div class="cms-card-header"><h5><i class="fas fa-clipboard-list me-2"></i>Enrolled Courses</h5></div>
+      <div class="table-responsive">
+        <table class="table cms-table">
+          <thead><tr><th>Course</th><th>Code</th><th>Enrolled Date</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for e in enrollments %}
+            <tr>
+              <td>{{ e['course_name'] }}</td>
+              <td><span class="badge-id">{{ e['code'] }}</span></td>
+              <td class="text-muted small">{{ e['enrolled_date'] }}</td>
+              <td><span class="status-badge {{ e['status'] | lower }}">{{ e['status'] }}</span></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-3">No enrollments.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="cms-card">
+      <div class="cms-card-header"><h5><i class="fas fa-star-half-alt me-2"></i>Marks</h5></div>
+      <div class="table-responsive">
+        <table class="table cms-table">
+          <thead><tr><th>Course</th><th>Internal</th><th>External</th><th>Total</th><th>Grade</th></tr></thead>
+          <tbody>
+            {% for m in marks %}
+            <tr>
+              <td>{{ m['course_name'] }}</td>
+              <td>{{ m['internal_marks'] }}</td>
+              <td>{{ m['external_marks'] }}</td>
+              <td><strong>{{ m['total_marks'] }}</strong></td>
+              <td><span class="grade-badge grade-{{ m['grade'] | replace('+','p') | lower if m['grade'] else 'na' }}">{{ m['grade'] or '—' }}</span></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted py-3">No marks entered.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

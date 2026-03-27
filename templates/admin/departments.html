@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Departments — EduCore{% endblock %}
+{% block page_title %}Department Management{% endblock %}
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <h5><i class="fas fa-building me-2"></i>All Departments</h5>
+    <a href="{{ url_for('admin_add_department') }}" class="btn btn-primary btn-sm">
+      <i class="fas fa-plus me-1"></i>Add Department
+    </a>
+  </div>
+  <div class="row g-4 p-3">
+    {% for d in departments %}
+    <div class="col-md-6 col-xl-4">
+      <div class="dept-card">
+        <div class="dept-card-icon"><i class="fas fa-building"></i></div>
+        <div class="dept-card-body">
+          <!-- FIX: Use d['key'] not d.key to avoid Jinja dict errors -->
+          <div class="dept-card-name">{{ d['dept_name'] }}</div>
+          <div class="dept-card-code">{{ d['code'] }}</div>
+          {% if d['hod'] %}
+          <div class="dept-card-hod"><i class="fas fa-user-tie me-1"></i>HOD: {{ d['hod'] }}</div>
+          {% endif %}
+          {% if d['description'] %}
+          <p class="dept-card-desc">{{ d['description'] }}</p>
+          {% endif %}
+          <div class="dept-card-stats">
+            <span><i class="fas fa-users me-1"></i>{{ d['student_count'] }} students</span>
+            <span><i class="fas fa-chalkboard-teacher me-1"></i>{{ d['staff_count'] }} staff</span>
+          </div>
+        </div>
+        <div class="dept-card-actions">
+          <!-- FIX: Use d['dept_id'] not d.id -->
+          <a href="{{ url_for('admin_edit_department', did=d['dept_id']) }}" class="btn-action edit" title="Edit">
+            <i class="fas fa-pen"></i>
+          </a>
+          <button class="btn-action delete" title="Delete"
+                  onclick="confirmDelete('{{ url_for('admin_delete_department', did=d['dept_id']) }}','{{ d['dept_name'] }}')">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center text-muted py-5">
+      <i class="fas fa-building fa-3x mb-3 d-block opacity-25"></i>
+      No departments found. Add one!
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content cms-modal">
+      <div class="modal-body text-center py-4">
+        <div class="delete-icon mb-3"><i class="fas fa-exclamation-triangle"></i></div>
+        <h5>Delete Department?</h5>
+        <p class="text-muted" id="deleteMsg"></p>
+        <form id="deleteForm" method="POST">
+          <button type="button" class="btn btn-outline-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function confirmDelete(url, name) {
+  document.getElementById('deleteForm').action = url;
+  document.getElementById('deleteMsg').textContent = 'Delete "' + name + '"? This affects related students and staff.';
+  new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+</script>
+{% endblock %}

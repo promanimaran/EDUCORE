@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Report Card — {{ student['name'] }}{% endblock %}
+{% block page_title %}Student Report Card{% endblock %}
+{% block extra_css %}
+<style>
+@media print {
+  .sidebar,.topbar,.flash-container,.no-print,.cms-footer { display:none !important; }
+  .main-wrapper { margin:0 !important; }
+  .page-content { padding:0 !important; }
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="no-print mb-3 d-flex gap-2">
+  <a href="{{ url_for('admin_reports') }}" class="btn btn-outline-secondary btn-sm">
+    <i class="fas fa-arrow-left me-1"></i>Back
+  </a>
+  <button class="btn btn-primary btn-sm" onclick="window.print()">
+    <i class="fas fa-print me-1"></i>Print Report
+  </button>
+</div>
+<div class="report-card">
+  <div class="report-header">
+    <div class="report-logo"><i class="fas fa-graduation-cap"></i></div>
+    <div class="report-college-info">
+      <h2>EduCore College</h2>
+      <p>123 Knowledge Avenue, Chennai — 600001 | Tel: +91-44-12345678</p>
+    </div>
+  </div>
+  <div class="report-title-bar">ACADEMIC REPORT CARD</div>
+  <div class="report-student-info">
+    <div class="report-info-grid">
+      <div><span class="rl">Student Name</span><span class="rv">: {{ student['name'] }}</span></div>
+      <div><span class="rl">Roll Number</span><span class="rv">: {{ student['roll_no'] }}</span></div>
+      <div><span class="rl">Department</span><span class="rv">: {{ student['dept_name'] or '—' }}</span></div>
+      <div><span class="rl">Year</span><span class="rv">: {{ student['year'] }}</span></div>
+      <div><span class="rl">Admission Year</span><span class="rv">: {{ student['admission_year'] or '—' }}</span></div>
+      <div><span class="rl">Status</span><span class="rv">: {{ student['status'] }}</span></div>
+    </div>
+  </div>
+  <div class="report-section-title">Academic Performance</div>
+  <table class="report-table">
+    <thead>
+      <tr><th>Sem</th><th>Course</th><th>Code</th><th>Credits</th><th>Internal (40)</th><th>External (60)</th><th>Total (100)</th><th>Grade</th></tr>
+    </thead>
+    <tbody>
+      {% set cur = namespace(sem=0) %}
+      {% for m in marks %}
+        {% if m['semester'] != cur.sem %}
+          {% set cur.sem = m['semester'] %}
+          <tr class="sem-row"><td colspan="8">Semester {{ m['semester'] }}</td></tr>
+        {% endif %}
+        <tr>
+          <td>{{ m['semester'] }}</td>
+          <td>{{ m['course'] }}</td>
+          <td>{{ m['code'] }}</td>
+          <td>{{ m['credits'] }}</td>
+          <td>{{ m['internal_marks'] }}</td>
+          <td>{{ m['external_marks'] }}</td>
+          <td><strong>{{ m['total_marks'] }}</strong></td>
+          <td><span class="grade-badge grade-{{ m['grade']|replace('+','p')|lower if m['grade'] else 'na' }}">{{ m['grade'] or '—' }}</span></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-3">No marks available.</td></tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3"><strong>Summary</strong></td>
+        <td><strong>{{ total_credits }}</strong></td>
+        <td colspan="2"></td>
+        <td><strong>Avg: {{ avg_marks }}</strong></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+  <div class="report-legend">
+    <strong>Grade Scale:</strong> A+ = 90-100 &nbsp;|&nbsp; A = 80-89 &nbsp;|&nbsp; B+ = 70-79 &nbsp;|&nbsp; B = 60-69 &nbsp;|&nbsp; C = 50-59 &nbsp;|&nbsp; D = 40-49 &nbsp;|&nbsp; F = Below 40
+  </div>
+  <div class="report-footer">
+    <div class="report-sign"><div class="sign-line"></div><p>Class Advisor</p></div>
+    <div class="report-generated">Generated on {{ today }}</div>
+    <div class="report-sign"><div class="sign-line"></div><p>Principal</p></div>
+  </div>
+</div>
+{% endblock %}

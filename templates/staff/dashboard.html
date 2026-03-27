@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Staff Dashboard — EduCore{% endblock %}
+{% block page_title %}My Dashboard{% endblock %}
+{% block content %}
+<div class="row g-4 mb-4">
+  <div class="col-sm-6 col-xl-4">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+      <div class="stat-info"><div class="stat-value">{{ courses|length }}</div><div class="stat-label">My Courses</div></div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-4">
+    <div class="stat-card stat-green">
+      <div class="stat-icon"><i class="fas fa-users"></i></div>
+      <div class="stat-info"><div class="stat-value">{{ courses|sum(attribute='enrolled') }}</div><div class="stat-label">Total Students</div></div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-4">
+    <div class="stat-card stat-orange">
+      <div class="stat-icon"><i class="fas fa-pen-to-square"></i></div>
+      <div class="stat-info"><div class="stat-value">{{ pending_marks }}</div><div class="stat-label">Pending Marks</div></div>
+    </div>
+  </div>
+</div>
+<div class="cms-card">
+  <div class="cms-card-header">
+    <h5><i class="fas fa-book-open me-2"></i>My Courses</h5>
+    <a href="{{ url_for('staff_marks') }}" class="btn btn-sm btn-primary"><i class="fas fa-pen me-1"></i>Enter Marks</a>
+  </div>
+  <div class="row g-3 p-3">
+    {% for c in courses %}
+    <div class="col-md-6 col-xl-4">
+      <div class="course-card">
+        <div class="course-card-header">
+          <span class="badge-id">{{ c['code'] }}</span>
+          <span class="status-badge {{ c['status']|lower }}">{{ c['status'] }}</span>
+        </div>
+        <h6 class="course-card-name">{{ c['course_name'] }}</h6>
+        <div class="course-card-meta">
+          <span><i class="fas fa-users me-1"></i>{{ c['enrolled'] }} enrolled</span>
+          <span><i class="fas fa-layer-group me-1"></i>Sem {{ c['semester'] }}</span>
+          <span><i class="fas fa-star me-1"></i>{{ c['credits'] }} credits</span>
+        </div>
+        <a href="{{ url_for('staff_marks_entry', course_id=c['course_id']) }}" class="btn btn-sm btn-outline-primary w-100 mt-2">
+          <i class="fas fa-pen me-1"></i>Enter / Edit Marks
+        </a>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center text-muted py-4">No courses assigned yet.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

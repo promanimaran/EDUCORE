@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Staff — EduCore{% endblock %}
+{% block page_title %}{{ action }} Staff{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <h5><i class="fas fa-user-tie me-2"></i>{{ action }} Staff</h5>
+        <a href="{{ url_for('admin_staff') }}" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i>Back</a>
+      </div>
+      <form method="POST">
+        <div class="row g-3 p-3">
+          <div class="col-md-6">
+            <label class="form-label">Full Name <span class="text-danger">*</span></label>
+            <input type="text" name="name" class="form-control cms-input" value="{{ staff['name'] if staff else '' }}" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email <span class="text-danger">*</span></label>
+            <input type="email" name="email" class="form-control cms-input" value="{{ staff['email'] if staff else '' }}" required/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" class="form-control cms-input" value="{{ staff['phone'] if staff else '' }}"/>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Password {% if not staff %}<span class="text-danger">*</span>{% else %}<small class="text-muted">(leave blank to keep)</small>{% endif %}</label>
+            <input type="password" name="password" class="form-control cms-input" {{ 'required' if not staff else '' }}/>
+          </div>
+          <div class="col-md-6">
+            <!-- FIX: name="dept_id" — uses correct FK column -->
+            <label class="form-label">Department</label>
+            <select name="dept_id" class="form-select cms-input">
+              <option value="">— Select Department —</option>
+              {% for d in departments %}
+              <option value="{{ d['dept_id'] }}" {{ 'selected' if staff and staff['dept_id']==d['dept_id'] else '' }}>
+                {{ d['dept_name'] }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Designation</label>
+            <select name="designation" class="form-select cms-input">
+              {% for des in ['Professor','Associate Professor','Assistant Professor','Lecturer','Lab Instructor','HOD'] %}
+              <option value="{{ des }}" {{ 'selected' if staff and staff['designation']==des else '' }}>{{ des }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Gender</label>
+            <select name="gender" class="form-select cms-input">
+              {% for g in ['Male','Female','Other'] %}
+              <option value="{{ g }}" {{ 'selected' if staff and staff['gender']==g else '' }}>{{ g }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Joining Date</label>
+            <input type="date" name="joining_date" class="form-control cms-input" value="{{ staff['joining_date'] if staff else '' }}"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select cms-input">
+              {% for st in ['Active','Inactive'] %}
+              <option value="{{ st }}" {{ 'selected' if staff and staff['status']==st else ('selected' if st=='Active' and not staff else '') }}>{{ st }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-12 text-end">
+            <a href="{{ url_for('admin_staff') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-1"></i>{{ action }} Staff</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

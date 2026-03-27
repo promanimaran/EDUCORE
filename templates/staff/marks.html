@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Marks Entry — EduCore{% endblock %}
+{% block page_title %}Marks Entry{% endblock %}
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <h5><i class="fas fa-pen-to-square me-2"></i>Select Course to Enter Marks</h5>
+  </div>
+  <div class="row g-3 p-3">
+    {% for c in courses %}
+    <div class="col-md-6 col-xl-4">
+      <div class="course-card">
+        <div class="course-card-header">
+          <span class="badge-id">{{ c['code'] }}</span>
+          <span class="badge bg-secondary">Sem {{ c['semester'] }}</span>
+        </div>
+        <h6 class="course-card-name">{{ c['course_name'] }}</h6>
+        <a href="{{ url_for('staff_marks_entry', course_id=c['course_id']) }}" class="btn btn-sm btn-primary w-100 mt-2">
+          <i class="fas fa-pen me-1"></i>Enter Marks
+        </a>
+      </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center text-muted py-4">No courses assigned to you.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

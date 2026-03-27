@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Reports — EduCore{% endblock %}
+{% block page_title %}Student Reports{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <h5><i class="fas fa-file-alt me-2"></i>Generate Student Report</h5>
+      </div>
+      <div class="p-4">
+        <label class="form-label">Select Student</label>
+        <select id="studentSelect" class="form-select cms-input mb-3">
+          <option value="">— Choose a student —</option>
+          {% for s in students %}
+          <option value="{{ s['student_id'] }}">{{ s['name'] }} ({{ s['roll_no'] }})</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-primary w-100" onclick="viewReport()">
+          <i class="fas fa-eye me-2"></i>View Report Card
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function viewReport() {
+  const sid = document.getElementById('studentSelect').value;
+  if (!sid) { alert('Please select a student.'); return; }
+  window.location.href = '/admin/reports/student/' + sid;
+}
+</script>
+{% endblock %}

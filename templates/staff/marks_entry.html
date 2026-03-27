@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Marks Entry — {{ course['course_name'] }}{% endblock %}
+{% block page_title %}Marks Entry{% endblock %}
+{% block content %}
+<div class="cms-card mb-3">
+  <div class="cms-card-header">
+    <div>
+      <h5 class="mb-0"><i class="fas fa-pen-to-square me-2"></i>{{ course['course_name'] }}</h5>
+      <small class="text-muted">{{ course['code'] }} &bull; Semester {{ course['semester'] }} &bull; {{ course['credits'] }} Credits</small>
+    </div>
+    <a href="{{ url_for('staff_marks') }}" class="btn btn-sm btn-outline-secondary">
+      <i class="fas fa-arrow-left me-1"></i>Back
+    </a>
+  </div>
+</div>
+<div class="cms-card">
+  <div class="cms-card-header">
+    <h5><i class="fas fa-users me-2"></i>Student Marks &nbsp;<small class="text-muted fw-normal">(Internal: /40 &nbsp;|&nbsp; External: /60)</small></h5>
+    <span class="text-muted small">{{ students|length }} student(s)</span>
+  </div>
+  <form method="POST" action="{{ url_for('staff_save_marks') }}">
+    <input type="hidden" name="course_id" value="{{ course['course_id'] }}"/>
+    <div class="table-responsive">
+      <table class="table cms-table marks-table">
+        <thead>
+          <tr><th>#</th><th>Roll No</th><th>Student</th><th>Internal /40</th><th>External /60</th><th>Total</th><th>Grade</th><th>Remarks</th></tr>
+        </thead>
+        <tbody>
+          {% for s in students %}
+          <tr>
+            <input type="hidden" name="student_ids" value="{{ s['student_id'] }}"/>
+            <td>{{ loop.index }}</td>
+            <td><span class="badge-id">{{ s['roll_no'] }}</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar-sm">{{ s['name'][0]|upper }}</div>{{ s['name'] }}
+              </div>
+            </td>
+            <td><input type="number" name="internal_{{ s['student_id'] }}" class="form-control marks-input" value="{{ s['internal_marks'] }}" min="0" max="40" step="0.5" onchange="calcTotal({{ s['student_id'] }})"/></td>
+            <td><input type="number" name="external_{{ s['student_id'] }}" class="form-control marks-input" value="{{ s['external_marks'] }}" min="0" max="60" step="0.5" onchange="calcTotal({{ s['student_id'] }})"/></td>
+            <td><span id="total_{{ s['student_id'] }}" class="total-display fw-bold">{{ (s['internal_marks'] + s['external_marks'])|round(1) }}</span></td>
+            <td>
+              <select name="grade_{{ s['student_id'] }}" class="form-select marks-select" id="grade_{{ s['student_id'] }}">
+                {% for g in ['','A+','A','B+','B','C','D','F'] %}
+                <option value="{{ g }}" {{ 'selected' if s['grade']==g else '' }}>{{ g or '—' }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td><input type="text" name="remarks_{{ s['student_id'] }}" class="form-control marks-input" value="{{ s['remarks'] }}" placeholder="Optional"/></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="text-center text-muted py-4">No students enrolled in this course.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if students %}
+    <div class="p-3 text-end">
+      <button type="submit" class="btn btn-primary px-4">
+        <i class="fas fa-save me-2"></i>Save All Marks
+      </button>
+    </div>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function calcTotal(sid) {
+  const i = parseFloat(document.querySelector('[name="internal_'+sid+'"]').value)||0;
+  const e = parseFloat(document.querySelector('[name="external_'+sid+'"]').value)||0;
+  const t = i + e;
+  document.getElementById('total_'+sid).textContent = t.toFixed(1);
+  let g = '';
+  if(t>=90) g='A+'; else if(t>=80) g='A'; else if(t>=70) g='B+';
+  else if(t>=60) g='B'; else if(t>=50) g='C'; else if(t>=40) g='D'; else if(t>0) g='F';
+  document.getElementById('grade_'+sid).value = g;
+}
+</script>
+{% endblock %}

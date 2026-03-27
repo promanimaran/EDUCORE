@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — EduCore{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<!-- Stat Cards -->
+<div class="row g-4 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-blue">
+      <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+      <div class="stat-info"><div class="stat-value">{{ stats.students }}</div><div class="stat-label">Active Students</div></div>
+      <a href="{{ url_for('admin_students') }}" class="stat-link">View all <i class="fas fa-arrow-right ms-1"></i></a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-green">
+      <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+      <div class="stat-info"><div class="stat-value">{{ stats.staff }}</div><div class="stat-label">Active Staff</div></div>
+      <a href="{{ url_for('admin_staff') }}" class="stat-link">View all <i class="fas fa-arrow-right ms-1"></i></a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-orange">
+      <div class="stat-icon"><i class="fas fa-building"></i></div>
+      <div class="stat-info"><div class="stat-value">{{ stats.departments }}</div><div class="stat-label">Departments</div></div>
+      <a href="{{ url_for('admin_departments') }}" class="stat-link">View all <i class="fas fa-arrow-right ms-1"></i></a>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="stat-card stat-purple">
+      <div class="stat-icon"><i class="fas fa-book-open"></i></div>
+      <div class="stat-info"><div class="stat-value">{{ stats.courses }}</div><div class="stat-label">Active Courses</div></div>
+      <a href="{{ url_for('admin_courses') }}" class="stat-link">View all <i class="fas fa-arrow-right ms-1"></i></a>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Recent Students -->
+  <div class="col-xl-7">
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <h5><i class="fas fa-user-clock me-2"></i>Recent Admissions</h5>
+        <a href="{{ url_for('admin_students') }}" class="btn btn-sm btn-outline-primary">View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table cms-table">
+          <thead><tr><th>Roll No</th><th>Name</th><th>Department</th><th>Joined</th></tr></thead>
+          <tbody>
+            {% for s in recent_students %}
+            <tr>
+              <td><span class="badge-id">{{ s['roll_no'] }}</span></td>
+              <td>{{ s['name'] }}</td>
+              <td>{{ s['dept_name'] or '—' }}</td>
+              <td class="text-muted small">{{ s['created_at'].strftime('%d %b %Y') if s['created_at'] else '—' }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center text-muted py-3">No students yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- Dept Stats -->
+  <div class="col-xl-5">
+    <div class="cms-card">
+      <div class="cms-card-header">
+        <h5><i class="fas fa-chart-bar me-2"></i>Students by Department</h5>
+      </div>
+      <div class="p-3">
+        {% for d in dept_stats %}
+        <div class="dept-bar-row">
+          <div class="dept-bar-label">{{ d['dept_name'] }}</div>
+          <div class="dept-bar-track"><div class="dept-bar-fill" style="width:{{ [d['total']*10,100]|min }}%"></div></div>
+          <div class="dept-bar-count">{{ d['total'] }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
